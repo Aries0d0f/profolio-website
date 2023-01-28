@@ -30,6 +30,7 @@ export type ListThemeResponse = {
 
 export interface UseTheme {
   theme: ComputedRef<Record<string, Theme> | undefined>;
+  current: ComputedRef<Theme | undefined>;
 
   ListTheme(): Promise<void>;
   ListThemeSuccess(themes: Theme[]): void;
