@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "run-p type-check build-only",
+    "build": "vite build",
+    "build:prod": "pnpm run type-check && pnpm run build",
     "preview": "vite preview --port 4173",
-    "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "npm run lint:eslint && npm run lint:stylelint",
+    "lint": "pnpm run lint:eslint && pnpm run lint:stylelint",
     "lint:eslint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "lint:stylelint": "stylelint 'src/**/*.{css,scss,sass,vue}' --fix"
   },
