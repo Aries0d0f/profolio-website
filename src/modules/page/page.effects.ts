@@ -156,24 +156,6 @@ const usePageEffects$ = (state: PageState) => {
       });
     });
 
-    // state.pages.forEach((page) => {
-    //   router$.addRoute({
-    //     path: page.path,
-    //     name: page.name,
-    //     components: {
-    //       default: page.layout.instance,
-    //       ContentView: page.content.article
-    //     },
-    //     props: {
-    //       page,
-    //       payload: page.layout
-    //     },
-    //     meta: {
-    //       page: page
-    //     }
-    //   });
-    // });
-
     router$.replace(router$.currentRoute.value.fullPath);
   };
 
