@@ -15,12 +15,12 @@ import type { Theme, UseTheme } from './theme.model';
 const PROVIDE_KEY: InjectionKey<UseTheme> = Symbol('Theme');
 
 export interface State {
-  theme: Theme | undefined;
+  theme: Record<string, Theme>;
 }
 
 const useTheme$ = () => {
   const state: State = reactive({
-    theme: ref<Theme>()
+    theme: ref<Record<string, Theme>>({})
   });
 
   const getters = {
