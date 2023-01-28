@@ -1,9 +1,9 @@
 import type { Optional } from './optional';
 import type { Callback } from './callback';
 
-type GeneralValue = boolean | number | string | Callback;
+export type GeneralValue = boolean | number | string | Callback;
 
-type GeneralArray = GeneralValue[] | GeneralArray[] | GeneralMap[];
+export type GeneralArray = GeneralValue[] | GeneralArray[] | GeneralMap[];
 
 export interface GeneralMap {
   [key: string]: Optional<GeneralValue | GeneralArray | GeneralMap>;
