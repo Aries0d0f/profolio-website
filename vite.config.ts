@@ -1,4 +1,6 @@
 import Vue from '@vitejs/plugin-vue';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -18,6 +20,16 @@ export default defineConfig({
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/.*\.(jpg|png|svg|json|js)$/]
       }
+    }),
+    AutoImport({
+      dts: true
+    }),
+    Components({
+      dts: true,
+      deep: true,
+      dirs: ['src/modules/components'],
+      include: [/\.vue$/, /\.vue\?vue/]
+    }),
     })
   ],
   worker: {
