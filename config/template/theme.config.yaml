@@ -2,12 +2,12 @@
 ---
 themes:
   - &light-theme
-    name: Light
+    name: light
     description: Light theme
     schema: light
   - &dark-theme
-    name: Dark
+    name: dark
     description: Dark theme
     schema: dark
   - <<: *dark-theme
-    name: Default
+    name: default
