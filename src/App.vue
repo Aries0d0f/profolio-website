@@ -11,21 +11,16 @@ const $component = useComponent();
 const $page = usePage();
 const $theme = useTheme();
 
-$component.Initializer();
-$theme.ListTheme();
-$page.ListPageConfig();
+(async () => {
+  $component.Initializer();
+  await $theme.ListTheme();
+  await $page.ListPageConfig();
+  $page.GenerateRoutes();
+})();
 </script>
 
 <template>
-  <template v-for="page in $page.pages.value" :key="page.id">
-    <Suspense>
-      <component
-        :is="page.layout.instance"
-        :page="page"
-        :payload="page.layout"
-      ></component>
-    </Suspense>
-  </template>
+  <RouterView></RouterView>
 </template>
 
 <style lang="scss">

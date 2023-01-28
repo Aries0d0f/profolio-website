@@ -1,4 +1,7 @@
 import Vue from '@vitejs/plugin-vue';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import Markdown from 'vite-plugin-md';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'node:url';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -7,6 +10,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [
     Vue({
+      include: [/\.vue$/, /\.md$/],
       reactivityTransform: true
     }),
     VitePWA({
@@ -18,6 +22,28 @@ export default defineConfig({
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/.*\.(jpg|png|svg|json|js)$/]
       }
+    }),
+    AutoImport({
+      dts: true
+    }),
+    Components({
+      dts: true,
+      deep: true,
+      dirs: ['src/modules/components'],
+      include: [/\.vue$/, /\.vue\?vue/]
+    }),
+    Markdown({
+      markdownItOptions: {
+        breaks: true,
+        html: true,
+        linkify: true,
+        typographer: true
+      },
+      // markdownItSetup(md) {
+      //   md.use(require('markdown-it-anchor'));
+      //   md.use(require('markdown-it-attrs'));
+      // },
+      wrapperClasses: 'article'
     })
   ],
   worker: {

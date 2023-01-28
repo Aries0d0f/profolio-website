@@ -2,17 +2,24 @@
 ---
 pages:
   - name: About
+    path: "/"
     layout:
       name: Layout/DefaultLayout
+    content:
+      name: Content/About
   - name: Skill
+    path: "/skill"
     layout:
       name: Layout/DefaultLayout
   - name: Experience
+    path: "/experience"
     layout:
       name: Layout/DefaultLayout
   - name: Profolio
+    path: "/profolio"
     layout:
       name: Layout/DefaultLayout
   - name: Contact
+    path: "/contact"
     layout:
       name: Layout/DefaultLayout
