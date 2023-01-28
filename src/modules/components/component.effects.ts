@@ -1,4 +1,3 @@
-import { defineAsyncComponent, markRaw } from 'vue';
 import { set, omit } from 'lodash-es';
 
 import useBaseEffects$ from '@/modules/base/base.effects';
@@ -11,17 +10,28 @@ import type {
   VueComponent,
   VueComponentSet
 } from './component.model';
+import { markRaw } from 'vue';
 
 const useComponentEffects$ = (state: ComponentState) => {
   const base$ = useBaseEffects$();
 
   const Initializer = (): void => {
-    state.instances = import.meta.glob<VueComponent>('./*/*.vue');
+    state.instances = {
+      ...import.meta.glob<VueComponent>('./*/*.vue'),
+      ...import.meta.glob<VueComponent>('@/../content/*.component.md')
+    };
   };
 
   const Loader = (component: Component): void => {
     try {
-      const instance = state.instances[`./${component.name}.vue`];
+      const instance =
+        state.instances[
+          /^Content/.exec(component.name)
+            ? `/${component.name[0].toLowerCase()}${component.name.slice(
+                1
+              )}.component.md`
+            : `./${component.name}.vue`
+        ];
 
       if (!instance) throw 'NotFound';
 
@@ -65,32 +75,30 @@ const useComponentEffects$ = (state: ComponentState) => {
       id: uuid(),
       name: component.name,
       instance: markRaw(
-        defineAsyncComponent<VueComponent>(
-          () =>
-            new Promise((resolve, reject) => {
-              try {
-                resolve(component.instance());
-              } catch (exception) {
-                if (exception instanceof Error) {
-                  reject(
-                    base$.Errorf(
-                      exception,
-                      Error,
-                      `Component Register: ${component.name}`
-                    )
-                  );
-                } else {
-                  reject(
-                    base$.Errorf(
-                      `Exception: ${exception}`,
-                      Error,
-                      `Component Register: ${component.name}`
-                    )
-                  );
-                }
+        () =>
+          new Promise((resolve, reject) => {
+            try {
+              resolve(component.instance());
+            } catch (exception) {
+              if (exception instanceof Error) {
+                reject(
+                  base$.Errorf(
+                    exception,
+                    Error,
+                    `Component Register: ${component.name}`
+                  )
+                );
+              } else {
+                reject(
+                  base$.Errorf(
+                    `Exception: ${exception}`,
+                    Error,
+                    `Component Register: ${component.name}`
+                  )
+                );
               }
-            })
-        )
+            }
+          })
       )
     });
   };
