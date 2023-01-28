@@ -24,12 +24,14 @@ export abstract class Theme {
   abstract fontSets: FontSize;
 }
 
-export type GetThemeResponse = Record<'theme', Theme>;
+export type ListThemeResponse = {
+  themes: Theme[];
+};
 
 export interface UseTheme {
-  theme: ComputedRef<Theme | undefined>;
+  theme: ComputedRef<Record<string, Theme> | undefined>;
 
-  GetTheme(): Promise<void>;
-  GetThemeSuccess(theme: Theme): void;
-  GetThemeError(err: Error): void;
+  ListTheme(): Promise<void>;
+  ListThemeSuccess(themes: Theme[]): void;
+  ListThemeError(err: Error): void;
 }

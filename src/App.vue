@@ -12,7 +12,7 @@ const $page = usePage();
 const $theme = useTheme();
 
 $component.Initializer();
-$theme.GetTheme();
+$theme.ListTheme();
 $page.ListPageConfig();
 </script>
 
