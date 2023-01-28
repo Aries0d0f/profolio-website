@@ -1,7 +1,11 @@
+@use 'sass:meta';
+@use 'sass:math';
+@use 'sass:list';
+
 /**
   * Forked from Normalize v7.0.1 by John Albin Wilkins (@JohnAlbin), Remastered by Aries Cs (@Aries0d0f)
   *
-  * @source https://github.com/JohnAlbin/normalize-scss/blob/7.0.1/sass/normalize/normalize-mixin.scss
+  * @source https://github.com/JohnAlbin/normalize-scss/blob/7.0.1/sass/normalize/_normalize-mixin.scss
   * @author Nicolas Gallagher (@necolas)
   * @author John Albin Wilkins (@JohnAlbin)
   * @author Aries Cs (@Aries0d0f)
@@ -28,11 +32,11 @@
   */
 
 // Helper function for the normalize() mixin.
-@function normalize-include($section, $exclude: null) {
+@function include($section, $exclude: null) {
   // Initialize the global variables needed by this function.
-  @if not global_variable_exists(normalize-include) {
-    $normalize-include: () !global;
-    $normalize-exclude: () !global;
+  @if not global_variable_exists(include) {
+    $include: () !global;
+    $exclude: () !global;
   }
 
   // Since we are given 2 parameters, set the global variables.
@@ -41,18 +45,18 @@
 
     // Sass doesn't have static variables, so the work-around is to stuff these
     // values into global variables so we can access them in future calls.
-    $normalize-include: if(meta.type-of($include) == "list", $include, ($include)) !global;
-    $normalize-exclude: if(meta.type-of($exclude) == "list", $exclude, ($exclude)) !global;
+    $include: if(meta.type-of($include) == "list", $include, ($include)) !global;
+    $exclude: if(meta.type-of($exclude) == "list", $exclude, ($exclude)) !global;
     @return true;
   }
 
   // Check if $section is in the $include list.
-  @if index($normalize-include, $section) {
+  @if index($include, $section) {
     @return true;
   }
 
   // If $include is set to (all), make sure $section is not in $exclude.
-  @else if not index($normalize-exclude, $section) and index($normalize-include, all) {
+  @else if not index($exclude, $section) and index($include, all) {
     @return true;
   }
   @return false;
@@ -65,24 +69,26 @@
   $exclude: ()
 ) {
   // Initialize the helper function by passing it this mixin's parameters.
-  $init: normalize-include($include, $exclude);
+  $init: include($include, $exclude);
 
+  /* stylelint-disable scss/operator-no-unspaced */
   // If we've customized any font variables, we'll need extra properties.
   @if
     $base-line-height != 24px or
-    $base-unit != "em" or
-    $h2-font-size != 1.5 * $base-font-size or
-    $h3-font-size != 1.17 * $base-font-size or
-    $h4-font-size != 1 * $base-font-size or
-    $h5-font-size != 0.83 * $base-font-size or
-    $h6-font-size != 0.67 * $base-font-size
+    $base-unit        != "em" or
+    $h2-font-size     != 1.5  * $base-font-size or
+    $h3-font-size     != 1.17 * $base-font-size or
+    $h4-font-size     != 1    * $base-font-size or
+    $h5-font-size     != 0.83 * $base-font-size or
+    $h6-font-size     != 0.67 * $base-font-size
   {
-    $normalize-vertical-rhythm: true !global;
+    $vertical-rhythm: true !global;
   }
+  /* stylelint-enable scss/operator-no-unspaced */
 
-  /*! normalize-scss | MIT/GPLv2 License | bit.ly/normalize-scss */
+  /*! normalize-scss | MIT/GPLv2 License | bit.ly/scss */
 
-  @if normalize-include(document) {
+  @if include(document) {
     /* Document
        ========================================================================== */
 
@@ -97,12 +103,12 @@
         /* Change the default font family in all browsers (opinionated). */
         font-family: $base-font-family;
       }
-      @if $base-font-size != 16px or $normalize-vertical-rhythm {
+      @if $base-font-size != 16px or $vertical-rhythm {
         // Correct old browser bug that prevented accessible resizing of text
         // when root font-size is set with px or em.
         font-size: ($base-font-size / 16px) * 100%;
       }
-      @if $normalize-vertical-rhythm {
+      @if $vertical-rhythm {
         line-height: ($base-line-height / $base-font-size) * 1em; /* 1 */
       } @else {
         line-height: 1.15; /* 1 */
@@ -114,7 +120,7 @@
     }
   }
 
-  @if normalize-include(sections) {
+  @if include(sections) {
     /* Sections
        ========================================================================== */
 
@@ -145,69 +151,69 @@
      */
 
     h1 {
-      @include normalize-font-size($h1-font-size);
-      @if $normalize-vertical-rhythm {
-        @include normalize-line-height($h1-font-size);
+      @include font-size($h1-font-size);
+      @if $vertical-rhythm {
+        @include line-height($h1-font-size);
       }
 
-      @if $normalize-vertical-rhythm {
+      @if $vertical-rhythm {
         /* Set 1 unit of vertical rhythm on the top and bottom margins. */
-        @include normalize-margin(1 0, $h1-font-size);
+        @include margin(1 0, $h1-font-size);
       } @else {
         margin: 0.67em 0;
       }
     }
 
-    @if $normalize-vertical-rhythm {
+    @if $vertical-rhythm {
       h2 {
-        @include normalize-font-size($h2-font-size);
-        @include normalize-line-height($h2-font-size);
-        @include normalize-margin(1 0, $h2-font-size);
+        @include font-size($h2-font-size);
+        @include line-height($h2-font-size);
+        @include margin(1 0, $h2-font-size);
       }
 
       h3 {
-        @include normalize-font-size($h3-font-size);
-        @include normalize-line-height($h3-font-size);
-        @include normalize-margin(1 0, $h3-font-size);
+        @include font-size($h3-font-size);
+        @include line-height($h3-font-size);
+        @include margin(1 0, $h3-font-size);
       }
 
       h4 {
-        @include normalize-font-size($h4-font-size);
-        @include normalize-line-height($h4-font-size);
-        @include normalize-margin(1 0, $h4-font-size);
+        @include font-size($h4-font-size);
+        @include line-height($h4-font-size);
+        @include margin(1 0, $h4-font-size);
       }
 
       h5 {
-        @include normalize-font-size($h5-font-size);
-        @include normalize-line-height($h5-font-size);
-        @include normalize-margin(1 0, $h5-font-size);
+        @include font-size($h5-font-size);
+        @include line-height($h5-font-size);
+        @include margin(1 0, $h5-font-size);
       }
 
       h6 {
-        @include normalize-font-size($h6-font-size);
-        @include normalize-line-height($h6-font-size);
-        @include normalize-margin(1 0, $h6-font-size);
+        @include font-size($h6-font-size);
+        @include line-height($h6-font-size);
+        @include margin(1 0, $h6-font-size);
       }
     }
   }
 
-  @if normalize-include(grouping) {
+  @if include(grouping) {
     /* Grouping content
        ========================================================================== */
 
-    @if $normalize-vertical-rhythm {
+    @if $vertical-rhythm {
       /**
        * Set 1 unit of vertical rhythm on the top and bottom margin.
        */
 
       blockquote {
-        @include normalize-margin(1 $indent-amount);
+        @include margin(1 $indent-amount);
       }
 
       dl,
       ol,
       ul {
-        @include normalize-margin(1 0);
+        @include margin(1 0);
       }
 
       /**
@@ -243,8 +249,8 @@
      */
 
     figure {
-      @if $normalize-vertical-rhythm {
-        @include normalize-margin(1 $indent-amount);
+      @if $vertical-rhythm {
+        @include margin(1 $indent-amount);
       } @else {
         margin: 1em $indent-amount;
       }
@@ -269,14 +275,14 @@
       display: block;
     }
 
-    @if $normalize-vertical-rhythm {
+    @if $vertical-rhythm {
       /**
        * Set 1 unit of vertical rhythm on the top and bottom margin.
        */
 
       p,
       pre {
-        @include normalize-margin(1 0);
+        @include margin(1 0);
       }
     }
 
@@ -291,7 +297,7 @@
     }
   }
 
-  @if normalize-include(links) {
+  @if include(links) {
     /* Links
        ========================================================================== */
 
@@ -306,7 +312,7 @@
     }
   }
 
-  @if normalize-include(text) {
+  @if include(text) {
     /* Text-level semantics
        ========================================================================== */
 
@@ -402,7 +408,7 @@
     }
   }
 
-  @if normalize-include(embedded) {
+  @if include(embedded) {
     /* Embedded content
        ========================================================================== */
 
@@ -441,7 +447,7 @@
     }
   }
 
-  @if normalize-include(forms) {
+  @if include(forms) {
     /* Forms
        ========================================================================== */
 
@@ -457,7 +463,7 @@
     textarea {
       font-family: if($base-font-family, $base-font-family, sans-serif); /* 1 */
       font-size: 100%; /* 1 */
-      @if $normalize-vertical-rhythm {
+      @if $vertical-rhythm {
         line-height: ($base-line-height / $base-font-size) * 1em; /* 1 */
       } @else {
         line-height: 1.15; /* 1 */
@@ -620,7 +626,7 @@
     }
   }
 
-  @if normalize-include(interactive) {
+  @if include(interactive) {
     /* Interactive
        ========================================================================== */
 
@@ -647,13 +653,13 @@
     menu {
       display: block;
 
-      @if $normalize-vertical-rhythm {
+      @if $vertical-rhythm {
         /*
          * 1. Set 1 unit of vertical rhythm on the top and bottom margin.
          * 2. Set consistent space for the list style image.
          */
 
-        @include normalize-margin(1 0); /* 1 */
+        @include margin(1 0); /* 1 */
 
         padding: 0 0 0 $indent-amount; /* 2 */
 
@@ -670,7 +676,7 @@
     }
   }
 
-  @if normalize-include(scripting) {
+  @if include(scripting) {
     /* Scripting
        ========================================================================== */
 
@@ -691,7 +697,7 @@
     }
   }
 
-  @if normalize-include(hidden) {
+  @if include(hidden) {
     /* Hidden
        ========================================================================== */
 
@@ -704,3 +710,96 @@
     }
   }
 }
+
+/**
+  * Forked from Normalize v7.0.1 by John Albin Wilkins (@JohnAlbin), Remastered by Aries Cs (@Aries0d0f)
+  *
+  * @source https://github.com/JohnAlbin/normalize-scss/blob/7.0.1/sass/normalize/_vertical-rhythm.scss
+  * @author Nicolas Gallagher (@necolas)
+  * @author John Albin Wilkins (@JohnAlbin)
+  * @author Aries Cs (@Aries0d0f)
+  * @license
+  * Copyright © Nicolas Gallagher and Jonathan Neal and John Albin Wilkins
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+  * this software and associated documentation files (the "Software"), to deal in
+  * the Software without restriction, including without limitation the rights to
+  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+  * of the Software, and to permit persons to whom the Software is furnished to do
+  * so, subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in all
+  * copies or substantial portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  * SOFTWARE.
+  */
+
+/**
+  * Vertical Rhythm
+  *
+  * This is the minimal amount of code needed to create vertical rhythm in our
+  * CSS. If you are looking for a robust solution, look at the excellent Typey
+  * library. @see https://github.com/jptaranto/typey
+  */
+
+  @function rhythm($value, $relative-to: $base-font-size, $unit: $base-unit) {
+    @if unit($value) != px {
+      @error "The normalize vertical-rhythm module only supports px inputs. The typey library is better.";
+    }
+    @if $unit == rem {
+      @return ($value / $base-font-size) * 1rem;
+    } @else if $unit == em {
+      @return math.div($value, $relative-to) * 1em;
+    } @else { // $unit == px
+      @return $value;
+    }
+  }
+
+  @mixin font-size($value, $relative-to: $base-font-size) {
+    @if unit($value) != 'px' {
+      @error "font-size() only supports px inputs. The typey library is better.";
+    }
+
+    font-size: rhythm($value, $relative-to);
+  }
+
+  @mixin rhythm($property, $values, $relative-to: $base-font-size) {
+    $value-list: $values;
+    $sep: space;
+    @if type-of($values) == 'list' {
+      $sep: list.separator($values);
+    } @else {
+      $value-list: list.append((), $values);
+    }
+
+    $normalized-values: ();
+    @each $value in $value-list {
+      @if unitless($value) and $value != 0 {
+        $value: $value * rhythm($base-line-height, $relative-to);
+      }
+
+      $normalized-values: list.append($normalized-values, $value, $sep);
+    }
+
+    #{$property}: $normalized-values;
+  }
+
+  @mixin margin($values, $relative-to: $base-font-size) {
+    @include rhythm(margin, $values, $relative-to);
+  }
+
+  @mixin line-height($font-size, $min-line-padding: 2px) {
+    $lines: math.ceil($font-size / $base-line-height);
+
+    // If lines are cramped include some extra leading.
+    @if ($lines * $base-line-height - $font-size) < $min-line-padding * 2 {
+      $lines: $lines + 1;
+    }
+    @include rhythm(line-height, $lines, $font-size);
+  }
