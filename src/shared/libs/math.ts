@@ -19,6 +19,8 @@ export type MathProxy = Math & {
         useVector?: boolean
       ) => number | Vector<T>;
     };
+    add: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
+    minus: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
   };
 };
 
@@ -58,24 +60,48 @@ const delta = <T extends string>(
 };
 
 const VectorDeltaHandler = {
-  get:
-    (target: {}, prop: string, receiver: any) =>
-    <T extends string>(
-      a: Vector<T>,
-      b: Vector<T>,
-      useVector?: boolean
-    ): number | Vector<T> => {
-      if (
-        /delta\.([a-zA-Z_0-9]+)/.exec(prop) &&
-        Object.prototype.hasOwnProperty.call(a, prop) &&
-        Object.prototype.hasOwnProperty.call(b, prop)
-      ) {
-        return deltaAsix(a, b, prop as T, useVector);
-      } else if (prop === 'delta') {
-        return delta(a, b, useVector);
-      }
-      return Reflect.get(target, prop, receiver);
+  get: (target: {}, prop: string, receiver: any) => {
+    if (/^delta/.test(prop)) {
+      return <T extends string>(
+        a: Vector<T>,
+        b: Vector<T>,
+        useVector?: boolean
+      ): number | Vector<T> => {
+        if (
+          /delta\.([a-zA-Z_0-9]+)/.exec(prop) &&
+          Object.prototype.hasOwnProperty.call(a, prop) &&
+          Object.prototype.hasOwnProperty.call(b, prop)
+        ) {
+          return deltaAsix(a, b, prop as T, useVector);
+        } else if (prop === 'delta') {
+          return delta(a, b, useVector);
+        }
+        return Reflect.get(target, prop, receiver);
+      };
     }
+
+    if (prop === 'add') {
+      return <T extends string>(a: Vector<T>, b: Vector<T>): Vector<T> =>
+        fromPairs(
+          Object.keys(a).map((axis) => [axis, a[axis as T] + b[axis as T]]) as [
+            T,
+            number
+          ][]
+        ) as Vector<T>;
+    }
+
+    if (prop === 'minus') {
+      return <T extends string>(a: Vector<T>, b: Vector<T>): Vector<T> =>
+        fromPairs(
+          Object.keys(a).map((axis) => [axis, a[axis as T] - b[axis as T]]) as [
+            T,
+            number
+          ][]
+        ) as Vector<T>;
+    }
+
+    return Reflect.get(target, prop, receiver);
+  }
 };
 
 const Math$: MathProxy = new Proxy<MathProxy>(Math as MathProxy, {
