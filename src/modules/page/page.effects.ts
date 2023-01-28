@@ -1,4 +1,5 @@
-import { fromPairs, toPairs } from 'lodash-es';
+import { forEach, fromPairs, groupBy, toPairs } from 'lodash-es';
+import { useRouter } from 'vue-router';
 
 import useBaseEffects$ from '@/modules/base/base.effects';
 
@@ -20,6 +21,7 @@ const usePageEffects$ = (state: PageState) => {
   const component$ = useComponent();
 
   const base$ = useBaseEffects$();
+  const router$ = useRouter();
 
   const ListPageConfig = (): Promise<void> =>
     http
@@ -130,11 +132,57 @@ const usePageEffects$ = (state: PageState) => {
     }
   };
 
+  const GenerateRoutes = () => {
+    forEach(groupBy(state.pages, 'layout.name'), (pages, layoutName) => {
+      console.log(pages);
+      router$.addRoute({
+        path: '/',
+        name: layoutName,
+        component: pages[0].layout.instance,
+        children: pages.map((page) => ({
+          path: page.path.substring(1),
+          name: page.name,
+          components: {
+            ContentView: page.content.instance
+          },
+          props: {
+            page,
+            payload: page.layout
+          },
+          meta: {
+            page: page
+          }
+        }))
+      });
+    });
+
+    // state.pages.forEach((page) => {
+    //   router$.addRoute({
+    //     path: page.path,
+    //     name: page.name,
+    //     components: {
+    //       default: page.layout.instance,
+    //       ContentView: page.content.article
+    //     },
+    //     props: {
+    //       page,
+    //       payload: page.layout
+    //     },
+    //     meta: {
+    //       page: page
+    //     }
+    //   });
+    // });
+
+    router$.replace(router$.currentRoute.value.fullPath);
+  };
+
   return {
     ListPageConfig,
     ListPageConfigSuccess,
     ListPageConfigError,
-    SetPageNumber
+    SetPageNumber,
+    GenerateRoutes
   };
 };
 
