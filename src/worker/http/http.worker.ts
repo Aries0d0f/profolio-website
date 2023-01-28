@@ -42,12 +42,20 @@ const requestHandler: {
     ...(body ? { body: JSON.stringify(body) } : {}),
     ...defaultOptions,
     ...options
-  }).then((res: Omit<HTTP.Response<Context>, 'yaml'>) =>
-    proxy({
-      ...res,
-      yaml: async () => parseYAML(await res.clone().text())
+  })
+    .then((res: Omit<HTTP.Response<Context>, 'yaml'>) => {
+      if (!res.ok) {
+        throw new Error(`${res.status} ${res.statusText}`);
+      }
+
+      return res;
     })
-  );
+    .then((res: Omit<HTTP.Response<Context>, 'yaml'>) =>
+      proxy({
+        ...res,
+        yaml: async () => parseYAML(await res.clone().text())
+      })
+    );
 
 export const http = {
   request: requestHandler,
