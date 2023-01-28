@@ -70,12 +70,10 @@ const usePageEffects$ = (state: PageState) => {
   const generatePage = (config: PageConfig, index: number): Nullable<Page> => {
     try {
       component$.Loader(config.layout);
+      component$.Loader(config.content);
 
       if (config.header) component$.Loader(config.header);
       if (config.footer) component$.Loader(config.footer);
-      toPairs(config.content).forEach(([_, component]) =>
-        component$.Loader(component)
-      );
       toPairs(config.injectable).forEach(([_, component]) =>
         component$.Loader(component)
       );
@@ -102,9 +100,9 @@ const usePageEffects$ = (state: PageState) => {
           component$.get(config.layout.name).value,
           config.layout.metadata
         ),
-        content: linkMetadataFromSet(
-          component$.getSet(config.content).value,
-          config.content
+        content: linkMetadata(
+          component$.get(config.content.name).value,
+          config.content.metadata
         ),
         injectable: linkMetadataFromSet(
           component$.getSet(config.injectable).value,

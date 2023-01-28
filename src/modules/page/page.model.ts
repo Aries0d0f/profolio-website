@@ -17,7 +17,7 @@ export abstract class Page extends Base {
   abstract header?: Component;
   abstract footer?: Component;
   abstract layout: Component;
-  abstract content: ComponentSet;
+  abstract content: Component;
   abstract injectable: ComponentSet;
   abstract style: ComponentSet;
   abstract assets: Assets;
@@ -41,4 +41,5 @@ export interface UsePage {
   ListPageConfigSuccess(configs: PageConfig[]): void;
   ListPageConfigError(err: Error): void;
   SetPageNumber(id: Page['id'], number: number): void;
+  GenerateRoutes(): void;
 }
