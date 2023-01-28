@@ -13,6 +13,7 @@ import type {
 } from '@/modules/components/component.model';
 import type { State as PageState } from './page.service';
 import type { Page, PageConfig } from './page.model';
+import type { ListPageConfigResponse } from './page.model';
 import type { Nullable } from '@/shared/types/optional';
 
 const usePageEffects$ = (state: PageState) => {
@@ -22,11 +23,11 @@ const usePageEffects$ = (state: PageState) => {
 
   const ListPageConfig = (): Promise<void> =>
     http
-      .get<PageConfig[]>(
+      .get<ListPageConfigResponse>(
         `${config.API_ENDPOINT_ROOT}/template/page.config.yaml`
       )
       .then((res) => res.yaml())
-      .then((pages) => ListPageConfigSuccess(pages))
+      .then((res) => ListPageConfigSuccess(res.pages))
       .catch((err) => ListPageConfigError(err));
 
   const ListPageConfigSuccess = (configs: PageConfig[]) => {
