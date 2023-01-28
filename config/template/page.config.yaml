@@ -1,0 +1,18 @@
+%YAML 1.1
+---
+pages:
+  - name: About
+    layout:
+      name: Layout/DefaultLayout
+  - name: Skill
+    layout:
+      name: Layout/DefaultLayout
+  - name: Experience
+    layout:
+      name: Layout/DefaultLayout
+  - name: Profolio
+    layout:
+      name: Layout/DefaultLayout
+  - name: Contact
+    layout:
+      name: Layout/DefaultLayout

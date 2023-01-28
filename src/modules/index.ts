@@ -33,5 +33,5 @@ function execModulesMethod(
 
 export const setupModules = () => {
   const ctx = useCtx();
-  execModulesMethod([], 'setup', ctx);
+  execModulesMethod(['pwa', 'components', 'page', 'theme'], 'setup', ctx);
 };
