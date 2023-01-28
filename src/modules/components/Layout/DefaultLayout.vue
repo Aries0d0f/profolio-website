@@ -4,5 +4,3 @@
   <ScreenTone></ScreenTone>
   <MainFrame></MainFrame>
 </template>
-
-<style scoped></style>

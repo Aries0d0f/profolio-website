@@ -16,15 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    ref="wrapperRef$"
-    :class="[
-      $style['screen-adoptive'],
-      $style['screen-clip'],
-      $style['layer-overlapped']
-    ]"
-    class="screen-tone-wrapper"
-  >
+  <div ref="wrapperRef$" class="screen-tone-wrapper">
     <svg
       :width="width"
       :height="height"
@@ -38,5 +30,3 @@ onMounted(() => {
     </svg>
   </div>
 </template>
-
-<style module lang="scss" scoped></style>

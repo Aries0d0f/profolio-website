@@ -5,5 +5,3 @@
   <RouterView name="DataView"></RouterView>
   <RouterView name="ContentView"></RouterView>
 </template>
-
-<style scoped></style>
