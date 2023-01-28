@@ -1,0 +1,13 @@
+%YAML 1.1
+---
+themes:
+  - &light-theme
+    name: Light
+    description: Light theme
+    schema: light
+  - &dark-theme
+    name: Dark
+    description: Dark theme
+    schema: dark
+  - <<: *dark-theme
+    name: Default
