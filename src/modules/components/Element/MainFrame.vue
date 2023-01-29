@@ -345,13 +345,13 @@ const framePath = computed(
 `
 );
 
-const calcVariables = () => {
+const measureBoundingBox = () => {
   width.value = wrapperRef$.value?.offsetWidth || 0;
   height.value = wrapperRef$.value?.offsetHeight || 0;
 };
 
 onMounted(() => {
-  calcVariables();
+  measureBoundingBox();
 });
 </script>
 
