@@ -1,0 +1,18 @@
+// grayscale
+$black: #000000;
+$dim: #0A0B0B;
+$gray-0: #414547;
+$gray-1: #86888A;
+$gray-2: #E5E5E5;
+$paper: #FFFEFC;
+$white: #FFFFFF;
+
+:export {
+  black: $black;
+  dim: $dim;
+  gray-0: $gray-0;
+  gray-1: $gray-1;
+  gray-2: $gray-2;
+  paper: $paper;
+  white: $white;
+}
