@@ -28,7 +28,7 @@ export type MathProxy = Math & {
  **/
 export const ARC_BASE = Number(0.5522847498307935);
 
-const deltaAsix = <T extends string>(
+const deltaAxis = <T extends string>(
   a: Vector<T>,
   b: Vector<T>,
   axis: keyof Vector<T>,
@@ -41,7 +41,7 @@ const delta = <T extends string>(
   useVector = false
 ): number | Vector<T> => {
   const matrix = Object.keys(a).map((axis) =>
-    deltaAsix(a, b, axis as T, useVector)
+    deltaAxis(a, b, axis as T, useVector)
   );
 
   return useVector
