@@ -15,6 +15,7 @@ const $theme = useTheme();
   $component.Initializer();
   await $theme.ListTheme();
   await $page.ListPageConfig();
+  $theme.StyleVariablesBinder($theme.current.value);
   $page.GenerateRoutes();
 })();
 </script>
