@@ -4,21 +4,11 @@ import { fromPairs } from 'lodash-es';
 export type MathProxy = Math & {
   ARC_BASE: number;
   Vector: {
-    delta: {
-      (): Record<
-        string,
-        <T extends string>(
-          a: Vector<T>,
-          b: Vector<T>,
-          useVector?: boolean
-        ) => number
-      >;
-      (): <T extends string>(
-        a: Vector<T>,
-        b: Vector<T>,
-        useVector?: boolean
-      ) => number | Vector<T>;
-    };
+    delta: <T extends string>(
+      a: Vector<T>,
+      b: Vector<T>,
+      useVector?: boolean
+    ) => number | Vector<T>;
     add: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
     minus: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
   };
@@ -72,13 +62,7 @@ const VectorDeltaHandler = {
         b: Vector<T>,
         useVector?: boolean
       ): number | Vector<T> => {
-        if (
-          /delta\.([a-zA-Z_0-9]+)/.exec(prop) &&
-          Object.prototype.hasOwnProperty.call(a, prop) &&
-          Object.prototype.hasOwnProperty.call(b, prop)
-        ) {
-          return deltaAsix(a, b, prop as T, useVector);
-        } else if (prop === 'delta') {
+        if (prop === 'delta') {
           return delta(a, b, useVector);
         }
         return Reflect.get(target, prop, receiver);
@@ -112,7 +96,7 @@ const VectorDeltaHandler = {
 const Math$: MathProxy = new Proxy<MathProxy>(Math as MathProxy, {
   get(target, prop, receiver) {
     if (prop === 'ARC_BASE') return ARC_BASE;
-    if (prop === 'Vector') return VectorDeltaHandler;
+    if (prop === 'Vector') return new Proxy({}, VectorDeltaHandler);
     if (prop === 'deg') return (rad: number): number => rad * (180 / Math.PI);
     if (prop === 'rad') return (deg: number): number => deg * (Math.PI / 180);
     if (prop === 'gcd')
