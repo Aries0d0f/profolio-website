@@ -379,6 +379,13 @@ const framePath = computed(
     position: absolute;
     width: 100%;
     height: 100vh;
+
+    svg {
+      shape-rendering: geometricprecision;
+      text-rendering: geometricprecision;
+      image-rendering: optimizequality;
+      color-rendering: optimizequality;
+    }
   }
 
   &--path {
