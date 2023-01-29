@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { ref, computed, reactive } from 'vue';
+import { useElementSize, useMouse } from '@vueuse/core';
 
 import Math$ from '@/shared/libs/math';
 
+const $mouse = reactive(
+  useMouse({
+    type: 'client',
+    resetOnTouchEnds: true
+  })
+);
+
 const wrapperRef$ = ref<HTMLElement>();
-const width = ref(0);
-const height = ref(0);
+const { width, height } = useElementSize(wrapperRef$);
 
 const dotSize = ref(5);
-const dotGapBase = ref(1);
-const dotGap = computed(() => {
-  const maxGap = Math$.gcd(width.value, height.value);
-
-  return Math$.clamp(
-    maxGap > dotSize.value * (5 * dotGapBase.value)
-      ? Math$.gcd(maxGap, dotSize.value * (5 * dotGapBase.value))
-      : Math$.lcm(maxGap, dotSize.value * (5 * dotGapBase.value)),
-    dotSize.value * (4 * dotGapBase.value),
-    dotSize.value * (6 * dotGapBase.value)
-  );
-});
-
-const measureBoundingBox = () => {
-  width.value = wrapperRef$.value?.offsetWidth || 0;
-  height.value = wrapperRef$.value?.offsetHeight || 0;
-};
-
-onMounted(() => {
-  measureBoundingBox();
-});
+const dotGapBase = ref(2);
+const dotGap = computed(() => dotSize.value * (4 * dotGapBase.value));
 </script>
 
 <template>
@@ -43,17 +31,39 @@ onMounted(() => {
     >
       <defs></defs>
       <rect x="0" y="0" width="100%" height="100%" fill="transparent" />
-      <template v-for="x in width / dotGap">
-        <template v-for="y in height / dotGap">
-          <template v-if="x % 2 === 0 && y % 2 === 0">
+      <template
+        v-if="Math.round(width / dotGap) * Math.round(height / dotGap) > 0"
+      >
+        <template v-for="x in Math.round(width / dotGap)">
+          <template
+            v-for="y in Math.round(height / dotGap)"
+            :key="`dot-${x}-${y}`"
+          >
             <path
-              :key="`dot-${x}-${y}`"
-              :d="`
-                M ${(x - 1) * dotGap} ${(y - 1) * dotGap - dotSize / 2}
+              :d="
+                Math$.Vector.delta(
+                  {
+                    x: $mouse.x,
+                    y: $mouse.y
+                  },
+                  {
+                    x: (x - 1) * dotGap,
+                    y: (y - 1) * dotGap
+                  }
+                ) <
+                (dotSize * dotGap) / 2
+                  ? `M ${(x - 1 / 2) * dotGap - dotSize / 2}
+                      ${(y - 1 / 2) * dotGap - dotSize / 2}
+                    l ${dotSize} ${dotSize}
+                    m ${dotSize * -1} 0
+                    l ${dotSize} ${dotSize * -1}`
+                  : `
+                M ${(x - 1 / 2) * dotGap} ${(y - 1 / 2) * dotGap - dotSize / 2}
                 v ${dotSize}
                 m ${dotSize / -2} ${dotSize / -2}
-                h ${dotSize}`"
-              :class="$style['screen-tone--path']"
+                h ${dotSize}`
+              "
+              :class="$style['screen-tone--dot']"
               fill="transparent"
               stroke="currentColor"
               stroke-linecap="round"
@@ -67,6 +77,7 @@ onMounted(() => {
 </template>
 
 <style module lang="scss" scoped>
+@use 'sass:string';
 @use '@/assets/styles/scss/modules/theme.module' as theme;
 
 .screen-tone {
@@ -76,9 +87,10 @@ onMounted(() => {
     height: 100vh;
   }
 
-  &--path {
+  &--dot {
     stroke: #{theme.$screen-tone-dot-color};
     stroke-width: #{theme.$screen-tone-dot-stroke-width};
+    opacity: 0.75;
   }
 }
 </style>
