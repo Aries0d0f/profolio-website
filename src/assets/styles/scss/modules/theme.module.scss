@@ -1,7 +1,22 @@
 @use '@/assets/styles/scss/modules/palette.module.scss' as palette;
 
+// #region Global
 $primary-text-color: var(--primary-text-color, #{palette.$dim});
 $primary-background-color: var(--primary-background-color, #{palette.$paper});
 $accent-0: var(--accent-0, #{palette.$gray-0});
 $accent-1: var(--accent-1, #{palette.$gray-1});
 $accent-2: var(--accent-2, #{palette.$gray-2});
+
+// #endregion
+
+// #region Frame
+$frame-stroke-color: $primary-text-color;
+$frame-stroke-width: 0.8px;
+
+// #endregion
+
+// #region Screen-Tone
+$screen-tone-dot-color: $primary-text-color;
+$screen-tone-dot-stroke-width: 0.8px;
+
+// #endregion
