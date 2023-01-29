@@ -22,6 +22,8 @@ export type MathProxy = Math & {
     add: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
     minus: <T extends string>(a: Vector<T>, b: Vector<T>) => Vector<T>;
   };
+  deg: (rad: number) => number;
+  rad: (deg: number) => number;
 };
 
 /*
@@ -108,6 +110,8 @@ const Math$: MathProxy = new Proxy<MathProxy>(Math as MathProxy, {
   get(target, prop, receiver) {
     if (prop === 'ARC_BASE') return ARC_BASE;
     if (prop === 'Vector') return VectorDeltaHandler;
+    if (prop === 'deg') return (rad: number): number => rad * (180 / Math.PI);
+    if (prop === 'rad') return (deg: number): number => deg * (Math.PI / 180);
     return Reflect.get(target, prop, receiver);
   }
 });
