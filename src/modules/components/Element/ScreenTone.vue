@@ -54,6 +54,10 @@ onMounted(() => {
                 m ${dotSize / -2} ${dotSize / -2}
                 h ${dotSize}`"
               :class="$style['screen-tone--path']"
+              fill="transparent"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             />
           </template>
         </template>

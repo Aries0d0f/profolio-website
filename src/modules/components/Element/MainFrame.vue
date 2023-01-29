@@ -371,8 +371,7 @@ onMounted(() => {
         :class="$style['main-frame--path']"
         :d="framePath"
         fill="transparent"
-        stroke="current
-        C olor"
+        stroke="currentColor"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
