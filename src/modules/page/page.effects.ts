@@ -72,10 +72,11 @@ const usePageEffects$ = (state: PageState) => {
   const generatePage = (config: PageConfig, index: number): Nullable<Page> => {
     try {
       component$.Loader(config.layout);
-      component$.Loader(config.content);
 
+      if (config.content) component$.Loader(config.content);
       if (config.header) component$.Loader(config.header);
       if (config.footer) component$.Loader(config.footer);
+
       toPairs(config.injectable).forEach(([_, component]) =>
         component$.Loader(component)
       );
@@ -102,10 +103,12 @@ const usePageEffects$ = (state: PageState) => {
           component$.get(config.layout.name).value,
           config.layout.metadata
         ),
-        content: linkMetadata(
-          component$.get(config.content.name).value,
-          config.content.metadata
-        ),
+        content: config.content
+          ? linkMetadata(
+              component$.get(config.content.name).value,
+              config.content.metadata
+            )
+          : undefined,
         injectable: linkMetadataFromSet(
           component$.getSet(config.injectable).value,
           config.injectable
@@ -134,7 +137,6 @@ const usePageEffects$ = (state: PageState) => {
 
   const GenerateRoutes = () => {
     forEach(groupBy(state.pages, 'layout.name'), (pages, layoutName) => {
-      console.log(pages);
       router$.addRoute({
         path: '/',
         name: layoutName,
@@ -143,7 +145,12 @@ const usePageEffects$ = (state: PageState) => {
           path: page.path.substring(1),
           name: page.name,
           components: {
-            ContentView: page.content.instance
+            ContentView:
+              page.content?.instance ??
+              (() =>
+                import(
+                  /* webpackChunkName: "EmptyBox" */ '@/modules/components/Element/EmptyBox.vue'
+                ))
           },
           props: {
             page,

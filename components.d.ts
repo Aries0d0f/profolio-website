@@ -8,9 +8,10 @@ export {};
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     DefaultLayout: typeof import('./src/modules/components/Layout/DefaultLayout.vue')['default'];
+    EmptyBox: typeof import('./src/modules/components/Element/EmptyBox.vue')['default'];
     MainFrame: typeof import('./src/modules/components/Element/MainFrame.vue')['default'];
-    ScreenTone: typeof import('./src/modules/components/Element/ScreenTone.vue')['default'];
     RouterLink: typeof import('vue-router')['RouterLink'];
     RouterView: typeof import('vue-router')['RouterView'];
+    ScreenTone: typeof import('./src/modules/components/Element/ScreenTone.vue')['default'];
   }
 }
