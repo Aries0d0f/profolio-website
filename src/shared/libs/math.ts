@@ -25,6 +25,8 @@ export type MathProxy = Math & {
   deg: (rad: number) => number;
   rad: (deg: number) => number;
   gcd: (a: number, b: number) => number;
+  lcm: (a: number, b: number) => number;
+  clamp: (value: number, min: number, max: number) => number;
 };
 
 /*
@@ -115,6 +117,11 @@ const Math$: MathProxy = new Proxy<MathProxy>(Math as MathProxy, {
     if (prop === 'rad') return (deg: number): number => deg * (Math.PI / 180);
     if (prop === 'gcd')
       return (a: number, b: number): number => (!b ? a : Math$.gcd(b, a % b));
+    if (prop === 'lcm')
+      return (a: number, b: number): number => (a * b) / Math$.gcd(a, b);
+    if (prop === 'clamp')
+      return (value: number, min: number, max: number): number =>
+        Math.min(Math.max(value, min), max);
     return Reflect.get(target, prop, receiver);
   }
 });
