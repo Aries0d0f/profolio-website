@@ -4,7 +4,7 @@ import type { Style } from '@/shared/types/style';
 import type { ComputedRef } from 'vue';
 
 export type Palette = {
-  [key: string]: Style.Color | Palette;
+  [key: string]: Style.Color;
 };
 
 export type Gradient = {
