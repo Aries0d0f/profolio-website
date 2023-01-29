@@ -16,7 +16,8 @@ const { width, height } = useElementSize(wrapperRef$);
 
 const dotSize = ref(5);
 const dotGapBase = ref(2);
-const dotGap = computed(() => dotSize.value * (4 * dotGapBase.value));
+const dotGap = computed<number>(() => dotSize.value * (4 * dotGapBase.value));
+const dotDefaultOpacity = computed<number>(() => window.devicePixelRatio > 1 ? 0.5 : 0.7);
 
 const dotMatrix = ref<
   {
@@ -70,8 +71,8 @@ const calcDots = () => {
         },
         active: isActive,
         opacity:
-          0.7 +
-          0.3 *
+          dotDefaultOpacity.value +
+          (1 - dotDefaultOpacity.value) *
             Math$.clamp(
               1 - distanceFromMouse / (dotSize.value * dotGap.value),
               0,
