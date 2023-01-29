@@ -70,8 +70,8 @@ const calcDots = () => {
         },
         active: isActive,
         opacity:
-          0.3 +
-          0.7 *
+          0.7 +
+          0.3 *
             Math$.clamp(
               1 - distanceFromMouse / (dotSize.value * dotGap.value),
               0,
