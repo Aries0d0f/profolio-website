@@ -7,6 +7,9 @@ $gray-2: #E5E5E5;
 $paper: #FFFEFC;
 $white: #FFFFFF;
 
+
+/* stylelint-disable selector-pseudo-class-no-unknown */
+/* stylelint-disable property-no-unknown */
 :export {
   black: $black;
   dim: $dim;
@@ -16,3 +19,6 @@ $white: #FFFFFF;
   paper: $paper;
   white: $white;
 }
+
+/* stylelint-enable property-no-unknown */
+/* stylelint-enable selector-pseudo-class-no-unknown */
