@@ -14,10 +14,10 @@ export abstract class Page extends Base {
   abstract path: string;
   abstract description?: string;
   abstract number: number;
+  abstract layout: Component;
   abstract header?: Component;
   abstract footer?: Component;
-  abstract layout: Component;
-  abstract content: Component;
+  abstract content?: Component;
   abstract injectable: ComponentSet;
   abstract style: ComponentSet;
   abstract assets: Assets;
