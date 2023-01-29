@@ -1,11 +1,14 @@
+import { fromPairs, forEach } from 'lodash-es';
+
 import useBaseEffects$ from '@/modules/base/base.effects';
 
 import http from '@/worker/http/http.adapter';
 import config from '@/shared/libs/config';
 
+import palette from '@/assets/styles/scss/modules/palette.module.scss';
+
 import type { State as ThemeState } from './theme.service';
 import type { Theme, ListThemeResponse } from './theme.model';
-import { fromPairs } from 'lodash-es';
 
 const useThemeEffects$ = (state: ThemeState) => {
   const $base = useBaseEffects$();
@@ -27,10 +30,26 @@ const useThemeEffects$ = (state: ThemeState) => {
     $base.Errorf(err, Error, 'ListThemeError');
   };
 
+  const StyleVariablesBinder = (theme: Theme) => {
+    const { palettes } = theme;
+
+    forEach(palettes, (value, key) => {
+      document.documentElement.style.setProperty(
+        `--${key}`,
+        `${
+          /^\$/.test(value.toString())
+            ? palette[value.toString().substring(1)] ?? value
+            : value
+        }`
+      );
+    });
+  };
+
   return {
     ListTheme,
     ListThemeSuccess,
-    ListThemeError
+    ListThemeError,
+    StyleVariablesBinder
   };
 };
 

@@ -4,7 +4,7 @@ import type { Style } from '@/shared/types/style';
 import type { ComputedRef } from 'vue';
 
 export type Palette = {
-  [key: string]: Style.Color | Palette;
+  [key: string]: Style.Color;
 };
 
 export type Gradient = {
@@ -30,9 +30,10 @@ export type ListThemeResponse = {
 
 export interface UseTheme {
   theme: ComputedRef<Record<string, Theme> | undefined>;
-  current: ComputedRef<Theme | undefined>;
+  current: ComputedRef<Theme>;
 
   ListTheme(): Promise<void>;
   ListThemeSuccess(themes: Theme[]): void;
   ListThemeError(err: Error): void;
+  StyleVariablesBinder(theme: Theme): void;
 }
