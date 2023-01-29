@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
+import { useElementSize } from '@vueuse/core';
 
 import Math$ from '@/shared/libs/math';
 
 import type { Vector } from '@/shared/types/vector';
 
 const wrapperRef$ = ref<HTMLElement>();
-const width = ref(0);
-const height = ref(0);
+const { width, height } = useElementSize(wrapperRef$);
+
 const bottomRightSpaceSize = ref(240);
 const bottomLeftCornerSize = ref(60);
 const leftMiddleSpaceSize = ref(420);
@@ -344,15 +345,6 @@ const framePath = computed(
   Z
 `
 );
-
-const calcVariables = () => {
-  width.value = wrapperRef$.value?.offsetWidth || 0;
-  height.value = wrapperRef$.value?.offsetHeight || 0;
-};
-
-onMounted(() => {
-  calcVariables();
-});
 </script>
 
 <template>
@@ -371,8 +363,7 @@ onMounted(() => {
         :class="$style['main-frame--path']"
         :d="framePath"
         fill="transparent"
-        stroke="current
-        C olor"
+        stroke="currentColor"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
