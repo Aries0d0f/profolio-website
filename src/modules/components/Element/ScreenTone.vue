@@ -17,7 +17,12 @@ const { width, height } = useElementSize(wrapperRef$);
 const dotSize = ref(5);
 const dotGapBase = ref(2);
 const dotGap = computed<number>(() => dotSize.value * (4 * dotGapBase.value));
-const dotDefaultOpacity = computed<number>(() => window.devicePixelRatio > 1 ? 0.5 : 0.7);
+const dotDefaultOpacity = computed<number>(() =>
+  window.devicePixelRatio > 1 ||
+  navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+    ? 0.4
+    : 0.5
+);
 
 const dotMatrix = ref<
   {
@@ -139,6 +144,11 @@ onMounted(() => {
   &--dot {
     stroke: #{theme.$screen-tone-dot-color};
     stroke-width: #{theme.$screen-tone-dot-stroke-width};
+
+    // Fix sub-pixel rendering on Firefox
+    @supports (-moz-appearance: none) {
+      stroke-width: calc(#{theme.$screen-tone-dot-stroke-width} * 1.25);
+    }
   }
 }
 </style>
