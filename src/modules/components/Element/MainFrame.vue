@@ -376,7 +376,7 @@ const framePath = computed(
 
 .main-frame {
   &--wrapper {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100vh;
 
