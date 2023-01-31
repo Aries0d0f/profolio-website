@@ -17,6 +17,7 @@ export type MathProxy = Math & {
   gcd: (a: number, b: number) => number;
   lcm: (a: number, b: number) => number;
   clamp: (value: number, min: number, max: number) => number;
+  round: (min: number, max: number) => number;
 };
 
 /*
@@ -106,6 +107,9 @@ const Math$: MathProxy = new Proxy<MathProxy>(Math as MathProxy, {
     if (prop === 'clamp')
       return (value: number, min: number, max: number): number =>
         Math.min(Math.max(value, min), max);
+    if (prop === 'round')
+      return (value: number, precision = 0): number =>
+        Math.round(value * 10 ** precision) / 10 ** precision;
     return Reflect.get(target, prop, receiver);
   }
 });

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted } from 'vue';
-import { useElementSize, useMouse } from '@vueuse/core';
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue';
+import { useElementSize, useMouse, useMousePressed } from '@vueuse/core';
 
 import Math$ from '@/shared/libs/math';
+
+import type { Vector } from '@/shared/types/vector';
 
 const $mouse = reactive(
   useMouse({
@@ -10,9 +12,16 @@ const $mouse = reactive(
     resetOnTouchEnds: true
   })
 );
+const $mousePressed = useMousePressed({ touch: false });
 
 const wrapperRef$ = ref<HTMLElement>();
 const { width, height } = useElementSize(wrapperRef$);
+
+const oldMousePosition = ref<Vector<'x' | 'y'>>({ x: 0, y: 0 });
+const mouseIdle = ref(false);
+const mouseIdleWeight = ref(1);
+const mouseIdleSensitive = ref(3);
+const mouseIdleDetectTimer$$ = ref<ReturnType<typeof setTimeout>>();
 
 const dotSize = ref(5);
 const dotGapBase = ref(2);
@@ -22,6 +31,9 @@ const dotDefaultOpacity = computed<number>(() =>
   navigator.userAgent.toLowerCase().indexOf('firefox') > -1
     ? 0.4
     : 0.5
+);
+const dotActiveZoneSize = computed<number>(
+  () => dotGap.value * dotSize.value * Math$.clamp(width.value / 1600, 1, 2)
 );
 
 const dotMatrix = ref<
@@ -37,6 +49,55 @@ const dotMatrix = ref<
     opacity: number;
   }[]
 >([]);
+
+const detectMouseIdle = (idle = 0) => {
+  const distanceFromMouse = Number(
+    Math$.Vector.delta(
+      {
+        x: $mouse.x,
+        y: $mouse.y
+      },
+      oldMousePosition.value
+    )
+  );
+
+  oldMousePosition.value = {
+    x: $mouse.x,
+    y: $mouse.y
+  };
+
+  if (idle >= mouseIdleSensitive.value) {
+    mouseIdle.value = true;
+    mouseIdleWeight.value = 0.1;
+
+    mouseIdleDetectTimer$$.value = setTimeout(() => {
+      detectMouseIdle(0);
+    }, 50);
+  } else if (
+    distanceFromMouse > (dotGap.value * Math.PI) / 20 ||
+    $mousePressed.pressed.value
+  ) {
+    mouseIdle.value = false;
+    mouseIdleWeight.value = Math$.clamp(
+      mouseIdleWeight.value *
+        (1 +
+          ($mousePressed.pressed.value
+            ? 0.33
+            : distanceFromMouse / dotActiveZoneSize.value)),
+      0,
+      1
+    );
+
+    mouseIdleDetectTimer$$.value = setTimeout(() => {
+      detectMouseIdle(0);
+    }, 50);
+  } else {
+    mouseIdleWeight.value = Math$.clamp(mouseIdleWeight.value * 0.75, 0, 1);
+    mouseIdleDetectTimer$$.value = setTimeout(() => {
+      detectMouseIdle(idle + 1);
+    }, 30);
+  }
+};
 
 const calcDots = () => {
   const dots = [];
@@ -54,7 +115,9 @@ const calcDots = () => {
           }
         )
       );
-      const isActive = distanceFromMouse < (dotSize.value * dotGap.value) / 2;
+      const isActive =
+        distanceFromMouse <
+        (dotActiveZoneSize.value * mouseIdleWeight.value) / 2;
 
       dots.push({
         id: `dot-${x}-${y}`,
@@ -79,7 +142,9 @@ const calcDots = () => {
           dotDefaultOpacity.value +
           (1 - dotDefaultOpacity.value) *
             Math$.clamp(
-              1 - distanceFromMouse / (dotSize.value * dotGap.value),
+              1 -
+                (mouseIdle.value ? Infinity : distanceFromMouse) /
+                  (dotActiveZoneSize.value * mouseIdleWeight.value),
               0,
               1
             )
@@ -94,6 +159,10 @@ const calcDots = () => {
 
 onMounted(() => {
   window.requestAnimationFrame(calcDots);
+  mouseIdleDetectTimer$$.value = setTimeout(detectMouseIdle, 50);
+});
+onUnmounted(() => {
+  clearTimeout(mouseIdleDetectTimer$$.value);
 });
 </script>
 
@@ -102,6 +171,7 @@ onMounted(() => {
     <svg
       :width="width"
       :height="height"
+      :class="$style['screen-tone']"
       preserveAspectRatio="xMinYMin"
       color-profile="sRGB"
       class="screen-tone"
@@ -133,13 +203,11 @@ onMounted(() => {
     position: fixed;
     width: 100%;
     height: 100vh;
-
-    svg {
-      shape-rendering: optimizespeed;
-      color-rendering: optimizespeed;
-      image-rendering: optimizespeed;
-    }
   }
+
+  shape-rendering: optimizespeed;
+  color-rendering: optimizespeed;
+  image-rendering: optimizespeed;
 
   &--dot {
     stroke: #{theme.$screen-tone-dot-color};
