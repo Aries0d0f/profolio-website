@@ -12,7 +12,7 @@ const $mouse = reactive(
     resetOnTouchEnds: true
   })
 );
-const $mousePressed = useMousePressed({ touch: false });
+const $mousePressed = useMousePressed();
 
 const wrapperRef$ = ref<HTMLElement>();
 const { width, height } = useElementSize(wrapperRef$);
