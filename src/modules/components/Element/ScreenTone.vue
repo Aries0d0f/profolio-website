@@ -20,7 +20,7 @@ const { width, height } = useElementSize(wrapperRef$);
 const oldMousePosition = ref<Vector<'x' | 'y'>>({ x: 0, y: 0 });
 const mouseIdle = ref(false);
 const mouseIdleWeight = ref(1);
-const mouseIdleSensitive = ref(3);
+const mouseIdleSensitive = ref(6);
 const mouseIdleDetectTimer$$ = ref<ReturnType<typeof setTimeout>>();
 
 const dotSize = ref(5);
@@ -29,12 +29,13 @@ const dotGap = computed<number>(() => dotSize.value * (4 * dotGapBase.value));
 const dotDefaultOpacity = computed<number>(() =>
   window.devicePixelRatio > 1 ||
   navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-    ? 0.4
-    : 0.5
+    ? 0.3
+    : 0.4
 );
 const dotActiveZoneSize = computed<number>(
   () => dotGap.value * dotSize.value * Math$.clamp(width.value / 1600, 1, 2)
 );
+const dotAnimateFPS = ref(24);
 
 const dotMatrix = ref<
   {
@@ -50,7 +51,7 @@ const dotMatrix = ref<
   }[]
 >([]);
 
-const detectMouseIdle = (idle = 0) => {
+const detectMouseIdle = (idle = 0, active = 0) => {
   const distanceFromMouse = Number(
     Math$.Vector.delta(
       {
@@ -66,36 +67,48 @@ const detectMouseIdle = (idle = 0) => {
     y: $mouse.y
   };
 
+  console.log(distanceFromMouse, idle, mouseIdle.value);
+
   if (idle >= mouseIdleSensitive.value) {
     mouseIdle.value = true;
     mouseIdleWeight.value = 0.1;
 
     mouseIdleDetectTimer$$.value = setTimeout(() => {
-      detectMouseIdle(0);
-    }, 50);
+      detectMouseIdle(0, 0);
+    }, 1000 / dotAnimateFPS.value);
   } else if (
-    distanceFromMouse > (dotGap.value * Math.PI) / 20 ||
+    distanceFromMouse >
+      (mouseIdle.value
+        ? ((dotGap.value * Math.PI) / 100) **
+          Math$.clamp(2 * mouseIdleWeight.value, 1, 2)
+        : 0) ||
     $mousePressed.pressed.value
   ) {
-    mouseIdle.value = false;
-    mouseIdleWeight.value = Math$.clamp(
-      mouseIdleWeight.value *
-        (1 +
-          ($mousePressed.pressed.value
-            ? 0.33
-            : distanceFromMouse / dotActiveZoneSize.value)),
-      0,
-      1
-    );
+    if (active >= mouseIdleSensitive.value / 3) {
+      mouseIdle.value = false;
+      mouseIdleWeight.value = Math$.clamp(
+        mouseIdleWeight.value *
+          (1 +
+            ($mousePressed.pressed.value
+              ? 0.33
+              : Math$.clamp(
+                  distanceFromMouse / dotActiveZoneSize.value,
+                  0.1,
+                  1
+                ))),
+        0,
+        1
+      );
+    }
 
     mouseIdleDetectTimer$$.value = setTimeout(() => {
-      detectMouseIdle(0);
-    }, 50);
+      detectMouseIdle(0, active + 1);
+    }, 1000 / dotAnimateFPS.value);
   } else {
     mouseIdleWeight.value = Math$.clamp(mouseIdleWeight.value * 0.75, 0, 1);
     mouseIdleDetectTimer$$.value = setTimeout(() => {
-      detectMouseIdle(idle + 1);
-    }, 30);
+      detectMouseIdle(idle + 1, 0);
+    }, 1000 / dotAnimateFPS.value);
   }
 };
 
@@ -116,8 +129,9 @@ const calcDots = () => {
         )
       );
       const isActive =
+        !mouseIdle.value &&
         distanceFromMouse <
-        (dotActiveZoneSize.value * mouseIdleWeight.value) / 2;
+          (dotActiveZoneSize.value * mouseIdleWeight.value) / 2;
 
       dots.push({
         id: `dot-${x}-${y}`,
@@ -154,11 +168,11 @@ const calcDots = () => {
 
   dotMatrix.value = dots;
 
-  window.requestAnimationFrame(calcDots);
+  setTimeout(calcDots, 1000 / dotAnimateFPS.value);
 };
 
 onMounted(() => {
-  window.requestAnimationFrame(calcDots);
+  calcDots();
   mouseIdleDetectTimer$$.value = setTimeout(detectMouseIdle, 50);
 });
 onUnmounted(() => {
