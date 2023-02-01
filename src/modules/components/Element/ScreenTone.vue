@@ -21,7 +21,9 @@ const oldMousePosition = ref<Vector<'x' | 'y'>>({ x: 0, y: 0 });
 const mouseIdle = ref(false);
 const mouseIdleWeight = ref(1);
 const mouseIdleSensitive = ref(6);
+
 const mouseIdleDetectTimer$$ = ref<ReturnType<typeof setTimeout>>();
+const dotRenderCycleTimer$$ = ref<ReturnType<typeof setInterval>>();
 
 const dotSize = ref(5);
 const dotGapBase = ref(2);
@@ -165,16 +167,21 @@ const calcDots = () => {
   }
 
   dotMatrix.value = dots;
-
-  setTimeout(calcDots, 1000 / dotAnimateFPS.value);
 };
 
 onMounted(() => {
-  calcDots();
-  mouseIdleDetectTimer$$.value = setTimeout(detectMouseIdle, 50);
+  dotRenderCycleTimer$$.value = setInterval(
+    calcDots,
+    1000 / dotAnimateFPS.value
+  );
+  mouseIdleDetectTimer$$.value = setTimeout(
+    detectMouseIdle,
+    1000 / dotAnimateFPS.value
+  );
 });
 onUnmounted(() => {
   clearTimeout(mouseIdleDetectTimer$$.value);
+  clearInterval(dotRenderCycleTimer$$.value);
 });
 </script>
 
