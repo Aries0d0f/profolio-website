@@ -6,6 +6,21 @@ import Math$ from '@/shared/libs/math';
 
 import type { Vector } from '@/shared/types/vector';
 
+const props = withDefaults(
+  defineProps<{
+    mouseIdleSensitive?: number;
+    dotSize?: number;
+    dotGapBase?: number;
+    FPS?: number;
+  }>(),
+  {
+    mouseIdleSensitive: 6,
+    dotSize: 5,
+    dotGapBase: 2,
+    FPS: 24
+  }
+);
+
 const $mouse = reactive(
   useMouse({
     type: 'client',
@@ -20,14 +35,11 @@ const { width, height } = useElementSize(wrapperRef$);
 const oldMousePosition = ref<Vector<'x' | 'y'>>({ x: 0, y: 0 });
 const mouseIdle = ref(false);
 const mouseIdleWeight = ref(1);
-const mouseIdleSensitive = ref(6);
 
 const mouseIdleDetectTimer$$ = ref<ReturnType<typeof setTimeout>>();
 const dotRenderCycleTimer$$ = ref<ReturnType<typeof setInterval>>();
 
-const dotSize = ref(5);
-const dotGapBase = ref(2);
-const dotGap = computed<number>(() => dotSize.value * (4 * dotGapBase.value));
+const dotGap = computed<number>(() => props.dotSize * (4 * props.dotGapBase));
 const dotDefaultOpacity = computed<number>(() =>
   window.devicePixelRatio > 1 ||
   navigator.userAgent.toLowerCase().indexOf('firefox') > -1
@@ -35,9 +47,8 @@ const dotDefaultOpacity = computed<number>(() =>
     : 0.4
 );
 const dotActiveZoneSize = computed<number>(
-  () => dotGap.value * dotSize.value * Math$.clamp(width.value / 1600, 1, 2)
+  () => dotGap.value * props.dotSize * Math$.clamp(width.value / 1600, 1, 2)
 );
-const dotAnimateFPS = ref(24);
 
 const dotMatrix = ref<
   {
@@ -69,13 +80,13 @@ const detectMouseIdle = (idle = 0, active = 0) => {
     y: $mouse.y
   };
 
-  if (idle >= mouseIdleSensitive.value) {
+  if (idle >= props.mouseIdleSensitive) {
     mouseIdle.value = true;
     mouseIdleWeight.value = 0.1;
 
     mouseIdleDetectTimer$$.value = setTimeout(() => {
       detectMouseIdle(0, 0);
-    }, 1000 / dotAnimateFPS.value);
+    }, 1000 / props.FPS);
   } else if (
     distanceFromMouse >
       (mouseIdle.value
@@ -84,7 +95,7 @@ const detectMouseIdle = (idle = 0, active = 0) => {
         : 0) ||
     $mousePressed.pressed.value
   ) {
-    if (active >= mouseIdleSensitive.value / 3) {
+    if (active >= props.mouseIdleSensitive / 3) {
       mouseIdle.value = false;
       mouseIdleWeight.value = Math$.clamp(
         mouseIdleWeight.value *
@@ -103,12 +114,12 @@ const detectMouseIdle = (idle = 0, active = 0) => {
 
     mouseIdleDetectTimer$$.value = setTimeout(() => {
       detectMouseIdle(0, active + 1);
-    }, 1000 / dotAnimateFPS.value);
+    }, 1000 / props.FPS);
   } else {
     mouseIdleWeight.value = Math$.clamp(mouseIdleWeight.value * 0.75, 0, 1);
     mouseIdleDetectTimer$$.value = setTimeout(() => {
       detectMouseIdle(idle + 1, 0);
-    }, 1000 / dotAnimateFPS.value);
+    }, 1000 / props.FPS);
   }
 };
 
@@ -140,16 +151,16 @@ const calcDots = () => {
         path: {
           default: `
             M ${(x - 1 / 2) * dotGap.value}
-              ${(y - 1 / 2) * dotGap.value - dotSize.value / 2}
-            v ${dotSize.value}
-            m ${dotSize.value / -2} ${dotSize.value / -2}
-            h ${dotSize.value}`,
+              ${(y - 1 / 2) * dotGap.value - props.dotSize / 2}
+            v ${props.dotSize}
+            m ${props.dotSize / -2} ${props.dotSize / -2}
+            h ${props.dotSize}`,
           active: `
-            M ${(x - 1 / 2) * dotGap.value - dotSize.value / 2}
-              ${(y - 1 / 2) * dotGap.value - dotSize.value / 2}
-            l ${dotSize.value} ${dotSize.value}
-            m ${dotSize.value * -1} 0
-            l ${dotSize.value} ${dotSize.value * -1}`
+            M ${(x - 1 / 2) * dotGap.value - props.dotSize / 2}
+              ${(y - 1 / 2) * dotGap.value - props.dotSize / 2}
+            l ${props.dotSize} ${props.dotSize}
+            m ${props.dotSize * -1} 0
+            l ${props.dotSize} ${props.dotSize * -1}`
         },
         active: isActive,
         opacity:
@@ -170,14 +181,8 @@ const calcDots = () => {
 };
 
 onMounted(() => {
-  dotRenderCycleTimer$$.value = setInterval(
-    calcDots,
-    1000 / dotAnimateFPS.value
-  );
-  mouseIdleDetectTimer$$.value = setTimeout(
-    detectMouseIdle,
-    1000 / dotAnimateFPS.value
-  );
+  dotRenderCycleTimer$$.value = setInterval(calcDots, 1000 / props.FPS);
+  mouseIdleDetectTimer$$.value = setTimeout(detectMouseIdle, 1000 / props.FPS);
 });
 onUnmounted(() => {
   clearTimeout(mouseIdleDetectTimer$$.value);
