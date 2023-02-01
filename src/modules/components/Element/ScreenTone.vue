@@ -67,8 +67,6 @@ const detectMouseIdle = (idle = 0, active = 0) => {
     y: $mouse.y
   };
 
-  console.log(distanceFromMouse, idle, mouseIdle.value);
-
   if (idle >= mouseIdleSensitive.value) {
     mouseIdle.value = true;
     mouseIdleWeight.value = 0.1;
