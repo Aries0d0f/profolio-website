@@ -10,8 +10,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   plugins: [
     Vue({
-      include: [/\.vue$/, /\.md$/],
-      reactivityTransform: true
+      include: [/\.vue$/, /\.md$/]
     }),
     VitePWA({
       registerType: 'autoUpdate',
