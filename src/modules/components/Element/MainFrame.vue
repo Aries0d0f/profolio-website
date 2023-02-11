@@ -6,6 +6,10 @@ import Math$ from '@/shared/libs/math';
 
 import type { Vector } from '@/shared/types/vector';
 
+const props = defineProps<{
+  title: string;
+}>();
+
 const wrapperRef$ = ref<HTMLElement>();
 const { width, height } = useElementSize(wrapperRef$);
 
@@ -561,6 +565,15 @@ const decoBottomLeftCornerPath = computed(
   Z
 `
 );
+
+const decoTextPath = computed(
+  () => `
+  M ${topLeftA0.value.x + radius.value}
+    ${topLeftA0.value.y + cuts.value.topLeft / 4}
+  L ${leftMiddleTopB0.value.x + radius.value}
+    ${leftMiddleTopB0.value.y - cuts.value.topLeft / 4}
+`
+);
 </script>
 
 <template>
@@ -574,11 +587,22 @@ const decoBottomLeftCornerPath = computed(
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
+        <mask id="main-frame-outline">
+          <path
+            :d="mainFramePath"
+            fill="currentColor"
+            stroke="currentColor"
+            stroke-width="1"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </mask>
         <mask id="main-frame">
           <path
             :d="mainFramePath"
-            fill="transparent"
+            fill="currentColor"
             stroke="currentColor"
+            stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
@@ -643,6 +667,32 @@ const decoBottomLeftCornerPath = computed(
         stroke-linecap="round"
         stroke-linejoin="round"
       />
+      <path
+        id="deco-text-path"
+        :d="decoTextPath"
+        fill="transparent"
+        stroke="transparent"
+      />
+      <text
+        :class="[
+          $style['main-frame--path'],
+          $style['deco-text'],
+          $style['outline']
+        ]"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        mask="url(#main-frame-outline)"
+      >
+        <textPath href="#deco-text-path">{{ props.title }}</textPath>
+      </text>
+      <text
+        :class="[$style['main-frame--path'], $style['deco-text']]"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        mask="url(#main-frame)"
+      >
+        <textPath href="#deco-text-path">{{ props.title }}</textPath>
+      </text>
     </svg>
   </div>
 </template>
@@ -668,12 +718,29 @@ const decoBottomLeftCornerPath = computed(
     stroke: #{theme.$frame-stroke-color};
     stroke-width: #{theme.$frame-stroke-width};
 
-    &.deco-dash {
-      stroke-dasharray: 6 8;
-    }
+    &.deco {
+      &-corner {
+        fill: #{theme.$frame-fill-color};
+      }
 
-    &.deco-corner {
-      fill: #{theme.$frame-fill-color};
+      &-dash {
+        stroke-dasharray: 6 8;
+      }
+
+      &-text {
+        font-size: calc(40px * v-bind('props.title.length'));
+        font-family: 'Noto Serif CJK TC', 'Noto Serif TC', serif;
+        font-weight: 900;
+        letter-spacing: -5px;
+        fill: #{theme.$frame-fill-color};
+        stroke: transparent;
+        stroke-width: 1.2;
+
+        &.outline {
+          fill: transparent;
+          stroke: #{theme.$frame-stroke-color};
+        }
+      }
     }
   }
 }
