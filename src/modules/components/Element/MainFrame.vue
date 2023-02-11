@@ -17,12 +17,15 @@ const leftMiddleSpaceSize = ref(420);
 const radius = ref(4);
 
 const cuts = ref({
-  topLeft: 45,
+  topLeft: 50,
+  topLeftDeco: 10,
+  topLeftDecoGap: 10,
   topRight: 10,
   bottomRight: 15,
   bottomMiddleRight: 6,
   bottomMiddleLeft: 10,
   bottomLeft: 15,
+  bottomLeftDecoGap: 5,
   leftMiddleBottom: 10,
   leftMiddleTop: 6
 });
@@ -48,7 +51,7 @@ const end = computed<Vector<'x' | 'y'>>(() => ({
 
 const topLeftA0 = computed<Vector<'x' | 'y'>>(() => ({
   x: start.value.x,
-  y: start.value.y + cuts.value.topLeft
+  y: start.value.y + cuts.value.topLeft + cuts.value.topLeftDecoGap
 }));
 const topLeftA1 = computed<Vector<'x' | 'y'>>(() => ({
   x: topLeftA0.value.x,
@@ -59,8 +62,21 @@ const topLeftA2 = computed<Vector<'x' | 'y'>>(() => ({
   y: topLeftA0.value.y + radius.value * Math.sin(Math$.rad(-45))
 }));
 
+const topLeftC0 = computed<Vector<'x' | 'y'>>(() => ({
+  x: start.value.x,
+  y: start.value.y + cuts.value.topLeftDeco
+}));
+const topLeftC1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: topLeftC0.value.x,
+  y: topLeftC0.value.y + radius.value / 2
+}));
+const topLeftC2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: topLeftC0.value.x + (radius.value / 2) * Math.cos(Math$.rad(-45)),
+  y: topLeftC0.value.y + (radius.value / 2) * Math.sin(Math$.rad(-45))
+}));
+
 const topLeftB0 = computed<Vector<'x' | 'y'>>(() => ({
-  x: start.value.x + cuts.value.topLeft,
+  x: start.value.x + cuts.value.topLeft + cuts.value.topLeftDecoGap,
   y: start.value.y
 }));
 const topLeftB1 = computed<Vector<'x' | 'y'>>(() => ({
@@ -70,6 +86,19 @@ const topLeftB1 = computed<Vector<'x' | 'y'>>(() => ({
 const topLeftB2 = computed<Vector<'x' | 'y'>>(() => ({
   x: topLeftB0.value.x + radius.value,
   y: topLeftB0.value.y
+}));
+
+const topLeftD0 = computed<Vector<'x' | 'y'>>(() => ({
+  x: start.value.x + cuts.value.topLeftDeco,
+  y: start.value.y
+}));
+const topLeftD1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: topLeftD0.value.x + (radius.value / 2) * Math.cos(Math$.rad(135)),
+  y: topLeftD0.value.y + (radius.value / 2) * Math.sin(Math$.rad(135))
+}));
+const topLeftD2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: topLeftD0.value.x + radius.value / 2,
+  y: topLeftD0.value.y
 }));
 
 const topRightA0 = computed<Vector<'x' | 'y'>>(() => ({
@@ -292,6 +321,108 @@ const leftMiddleTopB2 = computed<Vector<'x' | 'y'>>(() => ({
   y: leftMiddleTopB0.value.y + radius.value * Math.sin(Math$.rad(-90))
 }));
 
+const bottomLeftC0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    bottomMiddleLeftA0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(-135)),
+  y:
+    bottomMiddleLeftA0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(-135))
+}));
+const bottomLeftC1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftC0.value.x + radius.value * Math.cos(Math$.rad(-135)),
+  y: bottomLeftC0.value.y + radius.value * Math.sin(Math$.rad(-135))
+}));
+const bottomLeftC2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftC0.value.x + radius.value * Math.cos(Math$.rad(135)),
+  y: bottomLeftC0.value.y + radius.value * Math.sin(Math$.rad(135))
+}));
+
+const bottomLeftD0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    bottomMiddleLeftB0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(-112.5)),
+  y:
+    bottomMiddleLeftB0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(-112.5))
+}));
+const bottomLeftD1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftD0.value.x + (radius.value / 2) * Math.cos(Math$.rad(-45)),
+  y: bottomLeftD0.value.y + (radius.value / 2) * Math.sin(Math$.rad(-45))
+}));
+const bottomLeftD2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftD0.value.x + (radius.value / 2) * Math.cos(Math$.rad(180)),
+  y: bottomLeftD0.value.y + (radius.value / 2) * Math.sin(Math$.rad(180))
+}));
+
+const bottomLeftE0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    bottomLeftA0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(-67.5)),
+  y:
+    bottomLeftA0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(-67.5))
+}));
+const bottomLeftE1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftE0.value.x + (radius.value / 2) * Math.cos(Math$.rad(0)),
+  y: bottomLeftE0.value.y + (radius.value / 2) * Math.sin(Math$.rad(0))
+}));
+const bottomLeftE2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftE0.value.x + (radius.value / 2) * Math.cos(Math$.rad(-135)),
+  y: bottomLeftE0.value.y + (radius.value / 2) * Math.sin(Math$.rad(-135))
+}));
+
+const bottomLeftF0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    bottomLeftB0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(-22.5)),
+  y:
+    bottomLeftB0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(-22.5))
+}));
+const bottomLeftF1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftF0.value.x + (radius.value / 2) * Math.cos(Math$.rad(45)),
+  y: bottomLeftF0.value.y + (radius.value / 2) * Math.sin(Math$.rad(45))
+}));
+const bottomLeftF2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftF0.value.x + (radius.value / 2) * Math.cos(Math$.rad(-90)),
+  y: bottomLeftF0.value.y + (radius.value / 2) * Math.sin(Math$.rad(-90))
+}));
+
+const bottomLeftG0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    leftMiddleBottomA0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(22.5)),
+  y:
+    leftMiddleBottomA0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(22.5))
+}));
+const bottomLeftG1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftG0.value.x + (radius.value / 2) * Math.cos(Math$.rad(90)),
+  y: bottomLeftG0.value.y + (radius.value / 2) * Math.sin(Math$.rad(90))
+}));
+const bottomLeftG2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftG0.value.x + (radius.value / 2) * Math.cos(Math$.rad(-45)),
+  y: bottomLeftG0.value.y + (radius.value / 2) * Math.sin(Math$.rad(-45))
+}));
+
+const bottomLeftH0 = computed<Vector<'x' | 'y'>>(() => ({
+  x:
+    leftMiddleBottomB0.value.x +
+    cuts.value.bottomLeftDecoGap * Math.cos(Math$.rad(67.5)),
+  y:
+    leftMiddleBottomB0.value.y +
+    cuts.value.bottomLeftDecoGap * Math.sin(Math$.rad(67.5))
+}));
+const bottomLeftH1 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftH0.value.x + radius.value * Math.cos(Math$.rad(135)),
+  y: bottomLeftH0.value.y + radius.value * Math.sin(Math$.rad(135))
+}));
+const bottomLeftH2 = computed<Vector<'x' | 'y'>>(() => ({
+  x: bottomLeftH0.value.x + radius.value * Math.cos(Math$.rad(45)),
+  y: bottomLeftH0.value.y + radius.value * Math.sin(Math$.rad(45))
+}));
+
 const mainFramePath = computed(
   () => `
   M ${topLeftA2.value.x} ${topLeftA2.value.y}
@@ -391,6 +522,45 @@ const decoDash = computed(
   h ${-bottomLeftOffset.value}
 `
 );
+
+const decoTopLeftCornerPath = computed(
+  () => `
+  M ${topLeftC1.value.x} ${topLeftC1.value.y}
+  Q ${topLeftC0.value.x} ${topLeftC0.value.y}
+    ${topLeftC2.value.x} ${topLeftC2.value.y}
+  L ${topLeftD1.value.x} ${topLeftD1.value.y}
+  Q ${topLeftD0.value.x} ${topLeftD0.value.y}
+    ${topLeftD2.value.x} ${topLeftD2.value.y}
+  L ${topLeftB0.value.x - cuts.value.topLeftDecoGap} ${topLeftB0.value.y}
+  L ${topLeftA0.value.x} ${topLeftA0.value.y - cuts.value.topLeftDecoGap}
+  L ${topLeftC1.value.x} ${topLeftC1.value.y}
+  Z
+`
+);
+
+const decoBottomLeftCornerPath = computed(
+  () => `
+  M ${bottomLeftC1.value.x} ${bottomLeftC1.value.y}
+  Q ${bottomLeftC0.value.x} ${bottomLeftC0.value.y}
+    ${bottomLeftC2.value.x} ${bottomLeftC2.value.y}
+  L ${bottomLeftD1.value.x} ${bottomLeftD1.value.y}
+  Q ${bottomLeftD0.value.x} ${bottomLeftD0.value.y}
+    ${bottomLeftD2.value.x} ${bottomLeftD2.value.y}
+  L ${bottomLeftE1.value.x} ${bottomLeftE1.value.y}
+  Q ${bottomLeftE0.value.x} ${bottomLeftE0.value.y}
+    ${bottomLeftE2.value.x} ${bottomLeftE2.value.y}
+  L ${bottomLeftF1.value.x} ${bottomLeftF1.value.y}
+  Q ${bottomLeftF0.value.x} ${bottomLeftF0.value.y}
+    ${bottomLeftF2.value.x} ${bottomLeftF2.value.y}
+  L ${bottomLeftG1.value.x} ${bottomLeftG1.value.y}
+  Q ${bottomLeftG0.value.x} ${bottomLeftG0.value.y}
+    ${bottomLeftG2.value.x} ${bottomLeftG2.value.y}
+  L ${bottomLeftH1.value.x} ${bottomLeftH1.value.y}
+  Q ${bottomLeftH0.value.x} ${bottomLeftH0.value.y}
+    ${bottomLeftH2.value.x} ${bottomLeftH2.value.y}
+  Z
+`
+);
 </script>
 
 <template>
@@ -407,6 +577,24 @@ const decoDash = computed(
         <mask id="main-frame">
           <path
             :d="mainFramePath"
+            fill="transparent"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </mask>
+        <mask id="deco-top-left-corner">
+          <path
+            :d="decoTopLeftCornerPath"
+            fill="transparent"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </mask>
+        <mask id="deco-bottom-left-corner">
+          <path
+            :d="decoBottomLeftCornerPath"
             fill="transparent"
             stroke="currentColor"
             stroke-linecap="round"
@@ -439,6 +627,22 @@ const decoDash = computed(
         stroke-linecap="round"
         stroke-linejoin="round"
       />
+      <path
+        :class="[$style['main-frame--path'], $style['deco-corner']]"
+        :d="decoTopLeftCornerPath"
+        fill="transparent"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        :class="[$style['main-frame--path'], $style['deco-corner']]"
+        :d="decoBottomLeftCornerPath"
+        fill="transparent"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
     </svg>
   </div>
 </template>
@@ -466,6 +670,10 @@ const decoDash = computed(
 
     &.deco-dash {
       stroke-dasharray: 6 8;
+    }
+
+    &.deco-corner {
+      fill: #{theme.$frame-fill-color};
     }
   }
 }
