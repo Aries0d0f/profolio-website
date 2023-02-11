@@ -11,6 +11,7 @@ $accent-2: var(--accent-2, #{palette.$gray-2});
 
 // #region Frame
 $frame-stroke-color: $primary-text-color;
+$frame-fill-color: $primary-background-color;
 $frame-stroke-width: 0.8px;
 
 // #endregion
