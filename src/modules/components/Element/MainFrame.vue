@@ -11,6 +11,7 @@ const { width, height } = useElementSize(wrapperRef$);
 
 const bottomRightSpaceSize = ref(240);
 const bottomLeftCornerSize = ref(60);
+const bottomLeftOffset = ref(100);
 const leftMiddleSpaceSize = ref(420);
 
 const radius = ref(4);
@@ -291,7 +292,7 @@ const leftMiddleTopB2 = computed<Vector<'x' | 'y'>>(() => ({
   y: leftMiddleTopB0.value.y + radius.value * Math.sin(Math$.rad(-90))
 }));
 
-const framePath = computed(
+const mainFramePath = computed(
   () => `
   M ${topLeftA2.value.x} ${topLeftA2.value.y}
   L ${topLeftB1.value.x} ${topLeftB1.value.y}
@@ -345,6 +346,51 @@ const framePath = computed(
   Z
 `
 );
+
+const decoLine = computed(
+  () => `
+  M ${leftMiddleTopB0.value.x}
+    ${leftMiddleTopB0.value.y + cuts.value.leftMiddleTop * Math.SQRT2}
+  V ${
+    leftMiddleTopB0.value.y +
+    cuts.value.leftMiddleTop * Math.SQRT2 +
+    leftMiddleSpaceSize.value -
+    bottomLeftOffset.value -
+    +cuts.value.leftMiddleTop * 2.2
+  }
+  M ${
+    bottomMiddleRightA0.value.x -
+    cuts.value.bottomMiddleRight * Math.SQRT2 * Math.SQRT2
+  }
+    ${bottomMiddleRightA0.value.y}
+  H ${
+    bottomMiddleLeftB0.value.x +
+    cuts.value.bottomMiddleLeft * Math.SQRT2 * Math.SQRT2 +
+    bottomLeftOffset.value
+  }
+`
+);
+
+const decoDash = computed(
+  () => `
+  M ${leftMiddleTopB0.value.x}
+    ${
+      leftMiddleTopB0.value.y +
+      cuts.value.leftMiddleTop * Math.SQRT2 +
+      leftMiddleSpaceSize.value -
+      bottomLeftOffset.value -
+      +cuts.value.leftMiddleTop
+    }
+  v ${bottomLeftOffset.value}
+  M ${
+    bottomMiddleLeftB0.value.x +
+    cuts.value.bottomMiddleLeft * Math.SQRT2 * Math.SQRT2 +
+    bottomLeftOffset.value
+  }
+    ${bottomMiddleRightA0.value.y}
+  h ${-bottomLeftOffset.value}
+`
+);
 </script>
 
 <template>
@@ -357,11 +403,37 @@ const framePath = computed(
       class="main-frame"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <defs></defs>
+      <defs>
+        <mask id="main-frame">
+          <path
+            :d="mainFramePath"
+            fill="transparent"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </mask>
+      </defs>
       <rect x="0" y="0" width="100%" height="100%" fill="transparent" />
       <path
         :class="$style['main-frame--path']"
-        :d="framePath"
+        :d="mainFramePath"
+        fill="transparent"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        :class="[$style['main-frame--path'], $style['deco-line']]"
+        :d="decoLine"
+        fill="transparent"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        :class="[$style['main-frame--path'], $style['deco-dash']]"
+        :d="decoDash"
         fill="transparent"
         stroke="currentColor"
         stroke-linecap="round"
@@ -391,6 +463,10 @@ const framePath = computed(
   &--path {
     stroke: #{theme.$frame-stroke-color};
     stroke-width: #{theme.$frame-stroke-width};
+
+    &.deco-dash {
+      stroke-dasharray: 6 8;
+    }
   }
 }
 </style>
