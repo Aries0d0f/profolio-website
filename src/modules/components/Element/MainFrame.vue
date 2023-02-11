@@ -590,8 +590,8 @@ const decoTextPath = computed(
         <mask id="main-frame-outline">
           <path
             :d="mainFramePath"
-            fill="currentColor"
-            stroke="currentColor"
+            fill="#FFF"
+            stroke="#FFF"
             stroke-width="1"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -600,8 +600,8 @@ const decoTextPath = computed(
         <mask id="main-frame">
           <path
             :d="mainFramePath"
-            fill="currentColor"
-            stroke="currentColor"
+            fill="#FFF"
+            stroke="#FFF"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -611,7 +611,7 @@ const decoTextPath = computed(
           <path
             :d="decoTopLeftCornerPath"
             fill="transparent"
-            stroke="currentColor"
+            stroke="#FFF"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
@@ -620,7 +620,7 @@ const decoTextPath = computed(
           <path
             :d="decoBottomLeftCornerPath"
             fill="transparent"
-            stroke="currentColor"
+            stroke="#FFF"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
