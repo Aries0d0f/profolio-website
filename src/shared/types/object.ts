@@ -9,6 +9,8 @@ export interface GeneralMap {
   [key: string]: Optional<GeneralValue | GeneralArray | GeneralMap>;
 }
 
+export type ObjectLike<T = unknown> = Record<string, T>;
+
 export type OptionalMap<T, R extends keyof T = keyof T> = Omit<T, R> & {
   [P in R]?: T[P];
 };

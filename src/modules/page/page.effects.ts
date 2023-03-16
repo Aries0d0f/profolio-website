@@ -1,4 +1,4 @@
-import { forEach, fromPairs, groupBy, toPairs } from 'lodash-es';
+import { forEach, fromPairs, groupBy, toPairs, omit } from 'lodash-es';
 import { useRouter } from 'vue-router';
 
 import useBaseEffects$ from '@/modules/base/base.effects';
@@ -136,32 +136,41 @@ const usePageEffects$ = (state: PageState) => {
   };
 
   const GenerateRoutes = () => {
-    forEach(groupBy(state.pages, 'layout.name'), (pages, layoutName) => {
-      router$.addRoute({
-        path: '/',
-        name: layoutName,
-        component: pages[0].layout.instance,
-        children: pages.map((page) => ({
-          path: page.path.substring(1),
-          name: page.name,
-          components: {
-            ContentView:
-              page.content?.instance ??
-              (() =>
-                import(
-                  /* webpackChunkName: "EmptyBox" */ '@/modules/components/Element/EmptyBox.vue'
-                ))
-          },
+    forEach(
+      groupBy(state.pages, (page) =>
+        JSON.stringify(omit(page.layout, ['id', 'instance']))
+      ),
+      (pages, layoutName) => {
+        router$.addRoute({
+          path: '/',
+          name: layoutName,
+          component: pages[0].layout.instance,
           props: {
-            page,
-            payload: page.layout
+            context: pages[0].layout,
+            metadata: pages[0].layout.metadata
           },
-          meta: {
-            page: page
-          }
-        }))
-      });
-    });
+          children: pages.map((page) => ({
+            path: page.path.substring(1),
+            name: page.name,
+            components: {
+              ContentView:
+                page.content?.instance ??
+                (() =>
+                  import(
+                    /* webpackChunkName: "EmptyBox" */ '@/modules/components/Element/EmptyBox.vue'
+                  ))
+            },
+            props: {
+              metadata: page.content?.metadata ?? {},
+              context: page.content ?? {}
+            },
+            meta: {
+              page: page
+            }
+          }))
+        });
+      }
+    );
 
     router$.replace(router$.currentRoute.value.fullPath);
   };

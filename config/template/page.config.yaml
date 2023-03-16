@@ -5,12 +5,30 @@ pages:
     path: "/"
     layout:
       name: Layout/DefaultLayout
+      metadata:
+        i18n:
+          en: &default
+            title: About
+            deco: 關於我
+          zh:
+            title: 關於我
+            deco: About
+          default: *default
     content:
       name: Content/About
   - name: Skill
     path: "/skill"
     layout:
       name: Layout/DefaultLayout
+      metadata:
+        i18n:
+          en: &default
+            title: Skill
+            deco: 技能樹
+          zh:
+            title: 技能樹
+            deco: Skill
+          default: *default
   - name: Experience
     path: "/experience"
     layout:
